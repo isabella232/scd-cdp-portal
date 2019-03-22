@@ -4,6 +4,7 @@ import checkIsMobile from 'ismobilejs'
 
 // Utils
 import * as blockchain from "../utils/blockchain";
+import { onboardUser } from '../utils/assist'
 
 export default class NetworkStore {
   @observable stopIntervals = false;
@@ -87,6 +88,7 @@ export default class NetworkStore {
       const provider = await blockchain.setWebClientWeb3();
       this.waitingForAccessApproval = false;
       await blockchain.setWebClientProvider(provider);
+      await onboardUser(window.web3Provider)
       this.setNetwork();
       this.setNetworkInterval = setInterval(this.setNetwork, 3000);
     } catch (e) {

@@ -109,7 +109,7 @@ class Wallet extends React.Component {
             ?
               <WalletMobileClientDownload />
             :
-              <WalletClientDownload />
+            <WalletClientSelector formatClientName={ this.formatClientName } />
           :
             this.props.network.hw.showSelector
             ?

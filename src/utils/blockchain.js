@@ -3,6 +3,7 @@ import Promise from "bluebird";
 
 // Utils
 import web3 from "./web3";
+import { decorateContract } from './assist'
 
 const promisify = Promise.promisify;
 const schema = {};
@@ -27,7 +28,8 @@ export const getAccounts = () => {
 }
 
 export const loadObject = (type, address, label = null) => {
-  const object = web3.eth.contract(schema[type].abi).at(address);
+  const object = decorateContract(web3.eth.contract(schema[type].abi).at(address));
+ 
   if (label) {
     objects[label] = object;
   }

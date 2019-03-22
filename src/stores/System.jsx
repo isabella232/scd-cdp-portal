@@ -248,6 +248,7 @@ export default class SystemStore {
         // Set pip and pep
         this.pip.val = toBigNumber(r[2] ? parseInt(r[1], 16) : -1);
         this.pep.val = toBigNumber(r[4] ? parseInt(r[3], 16) : -1);
+
         // Set off, out, eek and safe
         this.tub.off = r[5][0];
         this.tub.out = r[5][1];
@@ -264,6 +265,7 @@ export default class SystemStore {
             console.debug('Detected allowance change for:', val[0]);
             setTimeout(() => this.rootStore.transactions.cleanLoading("changeAllowance", val[0]), 100);
           }
+          
           this[val[0]][val[1]] = r[7][index];
         }
 
@@ -747,6 +749,7 @@ export default class SystemStore {
     let value = params.value;
     let callbacks = [];
     let error = false;
+    
     switch (this.rootStore.dialog.method) {
       case "open":
         callbacks = [

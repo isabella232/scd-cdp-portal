@@ -56,7 +56,6 @@ class RootStore {
           this.system.init(r[1][0], r[1][1], r[1][2], r[1][3], r[1][4], r[1][5], r[1][6], r[1][7], r[1][8], r[1][9], r[1][10], r[1][11]);
           this.network.stopLoadingAddress();
           this.transactions.setStandardGasPrice();
-
           this.setVariablesInterval();
         } else {
           console.debug(`Error loading contracts (latest block ${this.transactions.latestBlock}, request one: ${block}, trying again...`);

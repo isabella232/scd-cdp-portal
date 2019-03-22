@@ -41,7 +41,7 @@ class App extends React.Component {
         <BrowserRouter>
           <React.Fragment>
             <Routes />
-            <Notify ref="notificator" />
+            {/* <Notify ref="notificator" /> */}
             <NotifySetUp />
             <Modal show={rootStore.transactions.priceModal.open} close={rootStore.transactions.closePriceModal}>
               <PriceModal />

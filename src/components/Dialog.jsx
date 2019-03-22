@@ -103,6 +103,7 @@ class Dialog extends React.Component {
       if (["wipe", "shut"].indexOf(this.props.dialog.method) !== -1) {
         params.govFeeType = this.state.govFeeType;
       }
+      
       this.props.system.executeAction(params);
     }
   }

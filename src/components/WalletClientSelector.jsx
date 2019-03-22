@@ -5,6 +5,7 @@ import {inject, observer} from "mobx-react";
 // Utils
 import {getWebClientProviderName} from "../utils/blockchain";
 import walletIcons from './WalletIcons';
+import { onboardUser } from '../utils/assist'
 
 
 @inject("network")
@@ -12,6 +13,7 @@ import walletIcons from './WalletIcons';
 class WalletClientSelector extends React.Component {
   render() {
     const providerName = getWebClientProviderName();
+
     return (
       <div className="frame no-account">
         <div className="heading">
@@ -19,7 +21,7 @@ class WalletClientSelector extends React.Component {
         </div>
         <section className="content">
           <div className="helper-text no-wrap">Get started by connecting one of the wallets below</div>
-          <a href="#action" onClick={ e => { e.preventDefault(); this.props.network.setWeb3WebClient() } } className="web-wallet">
+          <a href="#action" onClick={ e => { e.preventDefault(); providerName ? this.props.network.setWeb3WebClient() : onboardUser(window.web3Provider) } } className="web-wallet">
           {
             providerName ?
               <React.Fragment>

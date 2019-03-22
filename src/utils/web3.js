@@ -85,7 +85,7 @@ class Web3Extended extends Web3 {
           try {
             let provider;
             if (window.ethereum) {
-              await window.ethereum.enable();
+              // await window.ethereum.enable();
               provider = window.ethereum;
             } else {
               provider = window.web3.currentProvider;
