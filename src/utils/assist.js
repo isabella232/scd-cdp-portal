@@ -24,14 +24,14 @@ function msgHandlers(methodName) {
 
 // Returns initialized assist object if previously initialized.
 // Otherwise will initialize assist with the config object
-function getAssist(web3) {
+export function getAssist(web3) {
   if (initializedAssist) {
     return initializedAssist
   }
 
   const assistConfig = {
     networkId: process.env.REACT_APP_NETWORK_ID || 1,
-    dappId: '12153f55-f29e-4f11-aa07-90f10da5d778',
+    dappId: 'f57848e2-e571-48c6-9721-4eaee64dfebb',
     web3,
     messages: {
       txSent: data => msgHandlers(data.contract.methodName)('txSent', data),
