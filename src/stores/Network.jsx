@@ -88,7 +88,7 @@ export default class NetworkStore {
       const provider = await blockchain.setWebClientWeb3();
       this.waitingForAccessApproval = false;
       await blockchain.setWebClientProvider(provider);
-      await onboardUser(window.web3Provider)
+      // await onboardUser(window.web3Provider)
       this.setNetwork();
       this.setNetworkInterval = setInterval(this.setNetwork, 3000);
     } catch (e) {

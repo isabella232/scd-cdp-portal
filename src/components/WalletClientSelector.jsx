@@ -5,12 +5,40 @@ import {inject, observer} from "mobx-react";
 // Utils
 import {getWebClientProviderName} from "../utils/blockchain";
 import walletIcons from './WalletIcons';
-import { onboardUser } from '../utils/assist'
+import { onboardUser, getUserState } from '../utils/assist'
 
 
 @inject("network")
 @observer
 class WalletClientSelector extends React.Component {
+  componentDidMount = () => {
+    const intervalId = setInterval(() => checkReady(this.props.network.setWeb3WebClient), 500)
+
+    function checkReady(setWeb3WebClient) {
+      const onboardClicked = window.localStorage.getItem('onboardClicked')
+
+      if (!onboardClicked) {
+        clearInterval(intervalId)
+        return
+      }
+
+      getUserState().then(({accessToAccounts, correctNetwork}) => {
+        if (accessToAccounts && correctNetwork) {
+          setTimeout(setWeb3WebClient, 250)
+          clearInterval(intervalId)
+          window.localStorage.removeItem('onboardClicked')
+        }
+      })
+    }
+  }
+  
+  onboard = async () => {
+    window.localStorage.setItem('onboardClicked', 'true')
+    await onboardUser(window.web3Provider)
+    window.localStorage.removeItem('onboardClicked')
+    this.props.network.setWeb3WebClient()
+  }
+
   render() {
     const providerName = getWebClientProviderName();
 
@@ -21,7 +49,7 @@ class WalletClientSelector extends React.Component {
         </div>
         <section className="content">
           <div className="helper-text no-wrap">Get started by connecting one of the wallets below</div>
-          <a href="#action" onClick={ e => { e.preventDefault(); providerName ? this.props.network.setWeb3WebClient() : onboardUser(window.web3Provider) } } className="web-wallet">
+          <a href="#action" onClick={ e => { e.preventDefault(); this.onboard() } } className="web-wallet">
           {
             providerName ?
               <React.Fragment>

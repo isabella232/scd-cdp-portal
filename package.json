@@ -6,34 +6,32 @@
     "Gonzalo Balabasquer <gbalabasquer@makerdao.com>",
     "Michael Elliot <mike@makerdao.com>"
   ],
-  "description":
-    "Collateralized Debt Position Portal for creating and managing Single-Collateral Dai CDPs in the Dai Stablecoin System.",
+  "description": "Collateralized Debt Position Portal for creating and managing Single-Collateral Dai CDPs in the Dai Stablecoin System.",
   "private": true,
   "homepage": "https://cdp.blocknative.com",
   "scripts": {
     "build-css": "node-sass-chokidar src/scss/ -o src/scss/ --recursive",
-    "watch-css":
-      "npm run build-css && node-sass-chokidar src/scss/ -o src/scss/ --recursive --watch",
+    "watch-css": "npm run build-css && node-sass-chokidar src/scss/ -o src/scss/ --recursive --watch",
     "start-js": "node scripts/start.js",
     "start": "npm-run-all -p watch-css start-js",
     "build-js": "node scripts/build.js",
     "build": "npm-run-all build-css build-js",
     "test": "node scripts/test.js --env=jsdom",
-    "build-staging":
-      "DEPLOY_ENV=staging PUBLIC_URL=https://staging.cdp.makerdao.com npm run build",
-    "build-production":
-      "DEPLOY_ENV=production PUBLIC_URL=https://cdp.blocknative.com GENERATE_SOURCEMAP=false npm run build",
+    "build-staging": "DEPLOY_ENV=staging PUBLIC_URL=https://staging.cdp.makerdao.com npm run build",
+    "build-production": "DEPLOY_ENV=production PUBLIC_URL=https://cdp.blocknative.com GENERATE_SOURCEMAP=false npm run build",
     "deploy-staging": "DEPLOY_ENV=staging gulp deploy-aws",
     "deploy-production": "DEPLOY_ENV=production gulp deploy-aws",
     "build-deploy-staging": "npm run build-staging && npm run deploy-staging",
-    "build-deploy-production":
-      "npm run build-production && npm run deploy-production",
-    "build-deploy-surge":
-      "npm run build && gulp deploy-surge-kovan && gulp deploy-surge-main"
+    "build-deploy-production": "npm run build-production && npm run deploy-production",
+    "build-deploy-surge": "npm run build && gulp deploy-surge-kovan && gulp deploy-surge-main"
   },
   "jest": {
-    "collectCoverageFrom": ["src/**/*.{js,jsx,mjs}"],
-    "setupFiles": ["<rootDir>/config/polyfills.js"],
+    "collectCoverageFrom": [
+      "src/**/*.{js,jsx,mjs}"
+    ],
+    "setupFiles": [
+      "<rootDir>/config/polyfills.js"
+    ],
     "testMatch": [
       "<rootDir>/src/**/__tests__/**/*.{js,jsx,mjs}",
       "<rootDir>/src/**/?(*.)(spec|test).{js,jsx,mjs}"
@@ -43,10 +41,11 @@
     "transform": {
       "^.+\\.(js|jsx|mjs)$": "<rootDir>/node_modules/babel-jest",
       "^.+\\.css$": "<rootDir>/config/jest/cssTransform.js",
-      "^(?!.*\\.(js|jsx|mjs|css|json)$)":
-        "<rootDir>/config/jest/fileTransform.js"
+      "^(?!.*\\.(js|jsx|mjs|css|json)$)": "<rootDir>/config/jest/fileTransform.js"
     },
-    "transformIgnorePatterns": ["[/\\\\]node_modules[/\\\\].+\\.(js|jsx|mjs)$"],
+    "transformIgnorePatterns": [
+      "[/\\\\]node_modules[/\\\\].+\\.(js|jsx|mjs)$"
+    ],
     "moduleNameMapper": {
       "^react-native$": "react-native-web"
     },

@@ -6,7 +6,8 @@ let initializedAssist
 export const onboardUser = web3 => getAssist(web3).onboard()
 export const decorateContract = contract => getAssist().Contract(contract)
 export const decorateTransaction = txObject => getAssist().Transaction(txObject)
-
+export const getUserState = () => getAssist().getState()
+ 
 // msg handlers
 
 function msgHandlers(methodName) {
@@ -65,7 +66,15 @@ const executeAddressToDetails = {
     },
     token: 'ETH'
   },
-  '0xa3dc65a7': {
+  '0x8a9fc475': { // PAYING STABILITY FEE WITH DAI
+    action: {
+      infinitive: 'payback',
+      present: 'paying back',
+      past: 'payed back'
+    },
+    token: 'DAI'
+  },
+  '0xa3dc65a7': { // PAYING STABILITY FEE WITH MKR
     action: {
       infinitive: 'payback',
       present: 'paying back',
@@ -94,7 +103,7 @@ const hexToAction = {
     present: 'creating',
     past: 'created'
   },
-  '792037e3': {
+  'bc244c11': {
     infinitive: 'close',
     present: 'closing',
     past: 'closed'
@@ -115,13 +124,12 @@ const capitalizeFirst = str =>
 
 function txExecuteMsg(eventCode, data) {
   const { contract: { parameters } } = data
-
   let details = executeAddressToDetails[truncateAddress(parameters[1])]
 
   if (!details) {
     // creating/moving/closing CDP
     const args = parameters[1].substr(2)
-
+  
     details = {
       action: hexToAction[args.substr(0, 8)],
       cdpNum: parseInt(args.substr(72, 64), 16)
