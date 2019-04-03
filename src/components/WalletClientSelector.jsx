@@ -34,14 +34,16 @@ class WalletClientSelector extends React.Component {
   
   onboard = async () => {
     window.localStorage.setItem('onboardClicked', 'true')
-    await onboardUser(window.web3Provider)
+    if (!this.props.network.isMobile) {
+      await onboardUser(window.web3Provider)
+    }
     window.localStorage.removeItem('onboardClicked')
     this.props.network.setWeb3WebClient()
   }
 
   render() {
     const providerName = getWebClientProviderName();
-
+    
     return (
       <div className="frame no-account">
         <div className="heading">
@@ -49,7 +51,7 @@ class WalletClientSelector extends React.Component {
         </div>
         <section className="content">
           <div className="helper-text no-wrap">Get started by connecting one of the wallets below</div>
-          <a href="#action" onClick={ e => { e.preventDefault(); this.onboard() } } className="web-wallet">
+          <a href="#action" onClick={ e => { e.preventDefault(); providerName === 'metamask' ? this.onboard() : this.props.network.setWeb3WebClient() } } onTouchStart={ e => { e.preventDefault(); providerName === 'metamask' ? this.onboard() : this.props.network.setWeb3WebClient() } } className="web-wallet">
           {
             providerName ?
               <React.Fragment>

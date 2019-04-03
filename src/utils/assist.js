@@ -7,7 +7,7 @@ export const onboardUser = web3 => getAssist(web3).onboard()
 export const decorateContract = contract => getAssist().Contract(contract)
 export const decorateTransaction = txObject => getAssist().Transaction(txObject)
 export const getUserState = () => getAssist().getState()
- 
+
 // msg handlers
 
 function msgHandlers(methodName) {
@@ -30,6 +30,11 @@ export function getAssist(web3) {
     return initializedAssist
   }
 
+  const darkBlack = '#152128'
+  const gray = '#202930'
+  const offWhite = '#ededed'
+  const shadowWhite = 'rgba(237,237,237, 0.1)'
+
   const assistConfig = {
     networkId: process.env.REACT_APP_NETWORK_ID || 1,
     dappId: 'f57848e2-e571-48c6-9721-4eaee64dfebb',
@@ -41,7 +46,39 @@ export function getAssist(web3) {
       txConfirmed: data =>
         msgHandlers(data.contract.methodName)('txConfirmed', data),
       txFailed: data => msgHandlers(data.contract.methodName)('txFailed', data)
-    }
+    },
+    cssString: `
+      .bn-onboard-modal-shade {
+        background: ${shadowWhite};
+      }
+
+      .bn-onboard-modal {
+        background: ${darkBlack};
+      }
+
+      h1, h2, h3, h4, h5, p {
+        color: ${offWhite};
+      }
+
+      .bn-notification {
+        background: ${darkBlack};
+        box-shadow: 1px 1px 1px 0px ${shadowWhite};
+        border: 1px solid ${shadowWhite};
+      }
+
+      .bn-status-icon {
+        transition: background-color 150ms ease-in-out;
+      }
+
+      .bn-notification:hover .bn-status-icon {
+        background-position: -48px 1px !important;
+      }
+
+      .bn-notification.bn-failed .bn-status-icon:hover, .bn-notification.bn-progress .bn-status-icon:hover, .bn-notification.bn-complete .bn-status-icon:hover {
+        background-color: ${offWhite};
+        background-position: -48px 1px !important;
+      }
+    `
   }
 
   initializedAssist = bnc.init(assistConfig)
@@ -66,7 +103,8 @@ const executeAddressToDetails = {
     },
     token: 'ETH'
   },
-  '0x8a9fc475': { // PAYING STABILITY FEE WITH DAI
+  '0x8a9fc475': {
+    // PAYING STABILITY FEE WITH DAI
     action: {
       infinitive: 'payback',
       present: 'paying back',
@@ -74,7 +112,8 @@ const executeAddressToDetails = {
     },
     token: 'DAI'
   },
-  '0xa3dc65a7': { // PAYING STABILITY FEE WITH MKR
+  '0xa3dc65a7': {
+    // PAYING STABILITY FEE WITH MKR
     action: {
       infinitive: 'payback',
       present: 'paying back',
@@ -103,7 +142,7 @@ const hexToAction = {
     present: 'creating',
     past: 'created'
   },
-  'bc244c11': {
+  bc244c11: {
     infinitive: 'close',
     present: 'closing',
     past: 'closed'
@@ -129,7 +168,7 @@ function txExecuteMsg(eventCode, data) {
   if (!details) {
     // creating/moving/closing CDP
     const args = parameters[1].substr(2)
-  
+
     details = {
       action: hexToAction[args.substr(0, 8)],
       cdpNum: parseInt(args.substr(72, 64), 16)
