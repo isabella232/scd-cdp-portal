@@ -4,6 +4,7 @@ import {observable, computed} from "mobx";
 // Utils
 import * as blockchain from "../utils/blockchain";
 import {etherscanTx, methodSig} from "../utils/helpers";
+import { getNotify } from '../utils/blocknative'
 
 // Settings
 import * as settings from "../settings";
@@ -82,7 +83,7 @@ export default class TransactionsStore {
   logRequestTransaction = (id, title, cdpCreationTx) => {
     this.cdpCreationTx = cdpCreationTx;
     const msgTemp = "Waiting for transaction signature...";
-    this.notificator.info(id, title, msgTemp, false);
+    // this.notificator.info(id, title, msgTemp, false);
   }
 
   closePriceModal = () => {
@@ -90,12 +91,48 @@ export default class TransactionsStore {
     this.priceModal = { open: false, title: null, func: null, params: null, options: {}, callbacks: null };
   }
 
-  sendTransaction = (title, func, params, options, callbacks) => {
+  sendTransaction = async (title, func, params, options, callbacks) => {
+    console.log({title, func, params, options, callbacks})
     const cdpCreationTx = params[0] === settings.chain[this.rootStore.network.network].proxyRegistry || // This means it is calling to the createLockAndDraw
                           (typeof params[1] === "string" && methodSig("lockAndDraw(address,uint256)") === params[1].substring(0, 10));
     const id = Math.random();
     this.logRequestTransaction(id, title, cdpCreationTx);
-    func(...params, options, (e, tx) => this.log(e, tx, id, title, callbacks));
+    // (e, tx) => this.log(e, tx, id, title, callbacks)
+
+    const notify = getNotify()
+
+    const {emitter} = notify.transaction({
+      sendTransaction: () => new Promise((resolve, reject) => func(...params, options, (e, res) => {
+        e && reject(e)
+        resolve(res)
+      })),
+      gasPrice: () => blockchain.getGasPrice().then(res => res.toString()),
+      estimateGas: () => blockchain.estimateGas(options).then(res => res.toString()),
+      balance: this.rootStore.network.userState.balance,
+      txDetails: options,
+      contractCall: {
+        methodName: title,
+        params
+      }
+    })
+
+    emitter.on('txSent', tx => {
+      return {message: `Your transaction to ${title} has been sent to the network.`}
+    })
+
+    emitter.on('txPool', tx => {
+      return {message: `Your transaction to ${title} is pending.`}
+    })
+
+    emitter.on('txConfirmed', tx => {
+      this.logTransactionConfirmed({transactionHash: tx.hash, blockNumber: tx.blockNumber})
+      return {message: `Your transaction to ${title} is confirmed!`}
+    })
+
+    emitter.on('txSendFail', tx => {
+      this.logTransactionRejected(id, title, {message: 'The transaction was rejected'}, callbacks)
+      return {message: `Your transaction to ${title} has been rejected.`}
+    })
   }
 
   askPriceAndSend = (title, func, params, options, callbacks) => {
@@ -120,9 +157,9 @@ export default class TransactionsStore {
     this.registry = registry;
     this.cdpCreationTx = false;
     console.debug(msgTemp.replace("TX", tx));
-    this.notificator.hideNotification(id);
+    // this.notificator.hideNotification(id);
     if (!this.registry[tx].cdpCreationTx) {
-      this.notificator.info(tx, title, etherscanTx(this.rootStore.network.network, msgTemp.replace("TX", `${tx.substring(0,10)}...`), tx), false);
+      // this.notificator.info(tx, title, etherscanTx(this.rootStore.network.network, msgTemp.replace("TX", `${tx.substring(0,10)}...`), tx), false);
     }
   }
 
@@ -135,9 +172,9 @@ export default class TransactionsStore {
       registry[tx].pending = false;
       this.registry = registry;
       console.debug(msgTemp.replace("TX", tx), object.blockNumber);
-      this.notificator.hideNotification(tx);
+      // this.notificator.hideNotification(tx);
       if (!this.registry[tx].cdpCreationTx) {
-        this.notificator.success(tx, this.registry[tx].title, etherscanTx(this.rootStore.network.network, msgTemp.replace("TX", `${tx.substring(0,10)}...`), tx), 6000);
+        // this.notificator.success(tx, this.registry[tx].title, etherscanTx(this.rootStore.network.network, msgTemp.replace("TX", `${tx.substring(0,10)}...`), tx), 6000);
       }
       if (typeof this.registry[tx].callbacks !== "undefined" && this.registry[tx].callbacks.length > 0) {
         this.registry[tx].callbacks.forEach(callback => this.executeCallback(callback));
@@ -153,13 +190,13 @@ export default class TransactionsStore {
       registry[tx].cdpCreationTx = false;
       this.registry = registry;
       console.debug(msgTemp.replace("TX", tx));
-      this.notificator.error(tx, this.registry[tx].title, msgTemp.replace("TX", `${tx.substring(0,10)}...`), 5000);
+      // this.notificator.error(tx, this.registry[tx].title, msgTemp.replace("TX", `${tx.substring(0,10)}...`), 5000);
       this.lookForCleanCallBack(this.registry[tx].callbacks);
     }
   }
 
   logTransactionRejected = (id, title, error, callbacks = []) => {
-    this.notificator.error(id, title, error.message, 5000);
+    // this.notificator.error(id, title, error.message, 5000);
     this.lookForCleanCallBack(callbacks);
   }
 

@@ -32,7 +32,7 @@ class RootStore {
       this.interval = setInterval(() => {
         console.debug("Running variables interval");
         this.transactions.setStandardGasPrice();
-        this.transactions.checkPendingTransactions();
+        // this.transactions.checkPendingTransactions();
       }, 10000);
     }
 

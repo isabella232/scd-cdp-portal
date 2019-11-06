@@ -66,8 +66,8 @@ export const getGasPrice = () => {
   return promisify(web3.eth.getGasPrice)();
 }
 
-export const estimateGas = (to, data, value, from) => {
-  return promisify(web3.eth.estimateGas)({ to, data, value, from });
+export const estimateGas = (options) => {
+  return promisify(web3.eth.estimateGas)(options);
 }
 
 export const getTransaction = tx => {

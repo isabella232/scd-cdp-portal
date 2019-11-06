@@ -8,6 +8,8 @@ import WalletLink from "walletlink";
 import * as blockchain from "../utils/blockchain";
 import { mixpanelIdentify } from "../utils/analytics";
 
+import { initializeOnboard, getOnboard } from '../utils/blocknative'
+
 // Settings
 import * as settings from "../settings";
 
@@ -27,6 +29,7 @@ export default class NetworkStore {
   walletLinkProvider = null;
   constructor(rootStore) {
     this.rootStore = rootStore;
+    this.userState = {}
   }
 
   setNetwork = async () => {
@@ -111,23 +114,55 @@ export default class NetworkStore {
 
   // Web3 web client
   setWeb3WebClient = async () => {
-    try {
-      this.stopIntervals = false;
-      this.loadingAddress = true;
-      this.waitingForAccessApproval = typeof window.ethereum !== "undefined";
-      const provider = await blockchain.setWebClientWeb3();
-      this.waitingForAccessApproval = false;
-      await blockchain.setWebClientProvider(provider);
-      this.setNetwork();
-      this.setNetworkInterval = setInterval(this.setNetwork, 3000);
-    } catch (e) {
+    this.loadingAddress = true;
+    this.waitingForAccessApproval = true;
+
+    const onboard = initializeOnboard({
+      address: address => {
+        if (address) {
+          this.userState.account = address
+        }
+      },
+      network: networkId => {
+        this.userState.network = networkName(networkId)
+        if (networkId !== 1 && this.onboarded) {
+          getOnboard().walletReady()
+        }
+      } ,
+      balance: balance => this.userState.balance = balance,
+      wallet: async wallet => {
+        this.userState.wallet = wallet
+      }
+    })
+
+    const walletSelected = await onboard.walletSelect()
+    const walletReady = walletSelected && await onboard.walletReady()
+
+    if (!walletReady) {
       this.loadingAddress = false;
       this.waitingForAccessApproval = false;
-      if (e.message === "No client") {
-        this.downloadClient = true;
-      }
-      console.debug(e);
+    } else {
+      await blockchain.setWebClientProvider(this.userState.wallet.provider)
+      this.setNetwork()
+      this.onboarded = true
     }
+
+    // try {
+    //   // this.stopIntervals = false;
+    //   // this.waitingForAccessApproval = typeof window.ethereum !== "undefined";
+    //   // const provider = await blockchain.setWebClientWeb3();
+    //   // this.waitingForAccessApproval = false;
+    //   // await blockchain.setWebClientProvider(provider);
+    //   // this.setNetwork();
+    //   // this.setNetworkInterval = setInterval(this.setNetwork, 3000);
+    // } catch (e) {
+    //   this.loadingAddress = false;
+    //   this.waitingForAccessApproval = false;
+    //   if (e.message === "No client") {
+    //     this.downloadClient = true;
+    //   }
+    //   console.debug(e);
+    // }
   }
 
   startWalletLink = async () => {
@@ -237,5 +272,22 @@ export default class NetworkStore {
 
   stopLoadingAddress = () => {
     this.loadingAddress = false;
+  }
+}
+
+export function networkName(id) {
+  switch (id) {
+    case 1:
+      return "mainnet"
+    case 3:
+      return "ropsten"
+    case 4:
+      return "rinkeby"
+    case 5:
+      return "goerli"
+    case 42:
+      return "kovan"
+    default:
+      return "local"
   }
 }

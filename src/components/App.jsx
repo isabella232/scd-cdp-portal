@@ -19,7 +19,7 @@ import * as blockchain from "../utils/blockchain";
 import { gaInit, mixpanelInit } from '../utils/analytics';
 
 // Styles
-import "../scss/styles.css";
+import "../scss/styles.scss";
 
 // Convenient console access
 window.blockchain = blockchain;

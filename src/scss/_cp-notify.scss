@@ -1,114 +1,114 @@
 // boxes in alerts
 .notifications-container {
-	position: fixed;
-	width: 340px;
-	z-index: 999;
-	right: 0;
-	top: 0;
+    position: fixed;
+    width: 340px;
+    z-index: 999;
+    right: 0;
+    top: 0;
 
-	& > * {
-		padding: 32px 44px;
-		position: relative;
-		border: 0;
-		border-radius: 2px;
-		margin-top: 0.7rem;
-		right: 0.7rem;
-		p {
-			max-width: 30em;
-		}
-	}
-	h3 {
-		margin-top: 0px;
-	}
-	.nf-error {
-		background-color: rgba($error-red, 0.85);
-		color: $white;
-		.notification-headline {
-			&:after {
-				content: url('"~images/icon-stop.svg');
-				position: absolute;
-				left: -1.5em;
-				top: auto;
-				margin-top: 0.05em;
-			}
-		}
-	}
-	.nf-info {
-		background-color: rgba($neutral-blue, 0.85);
-		color: $white;
-		.notification-headline {
-			&:after {
-				content: url('"~images/icon-clock.svg');
-				position: absolute;
-				left: -1.5em;
-				top: auto;
-				margin-top: 0.05em;
-			}
-		}
-	}
-	.nf-success {
-		background-color: rgba($success-green, 0.85);
-		color: $white;
-		.notification-headline {
-			&:after {
-				content: url('"~images/icon-check.svg');
-				position: absolute;
-				left: -1.5em;
-				top: auto;
-				margin-top: 0.05em;
-			}
-		}
-	}
-	.nf-notice {
-	  background-color: rgba(#EAEAEA, 0.85);
-	  .notification-headline {
-	    color: #C0392B;
-	    &:after {
-	      content: url("~images/icon-warning.svg");
-	      position: absolute;
-	      left: -30px;
-	      top: auto;
-	      margin-top: 3px;
-	    }
-	  }
-	  div.grouped-section {
-	    color: #C0392B;
-	    font-size: 1.05rem;
-	    letter-spacing: 0.01rem;
-	    margin-top: 1em;
-	    margin-bottom: 1em;
-	  }
-	  .dark-text {
-	    color: #202930;
-	  }
-	  .indented-section {
-	    position: relative;
-	    padding-left: 2.5rem;
-	  }
-	  .line-indent {
-	    width: 7px;
-	    height: 94%;
-	    top: 3%;
-	    position: absolute;
-	    left: 10px;
-	    border-bottom: 1px solid #313D47;
-	    &:after {
-	      border-left: 1px solid #313D47;
-	      width: 1px;
-	      height: 100%;
-	      content: ' ';
-	      position: absolute;
-	      left: 3px;
-	    }
-	  }
-	}
-	.close-box {
-		position: absolute;
-		top: 0.785em;
-		right: 0.785em;
-	}
-	.notification-headline {
-		@include fontweight(bold);
-		position: relative;
-	}
+    & > * {
+        padding: 32px 44px;
+        position: relative;
+        border: 0;
+        border-radius: 2px;
+        margin-top: 0.7rem;
+        right: 0.7rem;
+        p {
+            max-width: 30em;
+        }
+    }
+    h3 {
+        margin-top: 0px;
+    }
+    .nf-error {
+        background-color: rgba($error-red, 0.85);
+        color: $white;
+        .notification-headline {
+            &:after {
+                content: url("~images/icon-stop.svg");
+                position: absolute;
+                left: -1.5em;
+                top: auto;
+                margin-top: 0.05em;
+            }
+        }
+    }
+    .nf-info {
+        background-color: rgba($neutral-blue, 0.85);
+        color: $white;
+        .notification-headline {
+            &:after {
+                content: url("~images/icon-clock.svg");
+                position: absolute;
+                left: -1.5em;
+                top: auto;
+                margin-top: 0.05em;
+            }
+        }
+    }
+    .nf-success {
+        background-color: rgba($success-green, 0.85);
+        color: $white;
+        .notification-headline {
+            &:after {
+                content: url("~images/icon-check.svg");
+                position: absolute;
+                left: -1.5em;
+                top: auto;
+                margin-top: 0.05em;
+            }
+        }
+    }
+    .nf-notice {
+        background-color: rgba(#eaeaea, 0.85);
+        .notification-headline {
+            color: #c0392b;
+            &:after {
+                content: url("~images/icon-warning.svg");
+                position: absolute;
+                left: -30px;
+                top: auto;
+                margin-top: 3px;
+            }
+        }
+        div.grouped-section {
+            color: #c0392b;
+            font-size: 1.05rem;
+            letter-spacing: 0.01rem;
+            margin-top: 1em;
+            margin-bottom: 1em;
+        }
+        .dark-text {
+            color: #202930;
+        }
+        .indented-section {
+            position: relative;
+            padding-left: 2.5rem;
+        }
+        .line-indent {
+            width: 7px;
+            height: 94%;
+            top: 3%;
+            position: absolute;
+            left: 10px;
+            border-bottom: 1px solid #313d47;
+            &:after {
+                border-left: 1px solid #313d47;
+                width: 1px;
+                height: 100%;
+                content: " ";
+                position: absolute;
+                left: 3px;
+            }
+        }
+    }
+    .close-box {
+        position: absolute;
+        top: 0.785em;
+        right: 0.785em;
+    }
+    .notification-headline {
+        @include fontweight(bold);
+        position: relative;
+    }
 }
