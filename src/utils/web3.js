@@ -13,53 +13,50 @@ import TrezorSubProvider from "./trezor-subprovider";
 import * as settings from "../settings";
 
 export const getWebClientProviderName = () => {
-  if (window.imToken)
-    return "imtoken";
+  // if (window.imToken) return "imtoken";
 
-  if (window.ethereum && window.ethereum.isStatus)
-    return "status";
+  // if (window.ethereum && window.ethereum.isStatus) return "status";
 
-  if (!window.web3 || typeof window.web3.currentProvider === "undefined")
-    return "";
+  // if (!window.web3 || typeof window.web3.currentProvider === "undefined")
+  //   return "";
 
-  if (window.web3.currentProvider.isAlphaWallet)
-    return "alphawallet";
+  // if (window.web3.currentProvider.isAlphaWallet) return "alphawallet";
 
-  if (window.activeProvider && window.activeProvider.isWalletLink)
-    return "walletlink";
+  // if (window.activeProvider && window.activeProvider.isWalletLink)
+  //   return "walletlink";
 
-  if (window.web3.currentProvider.isMetaMask && checkIsMobile.any)
-    return "metamask-mobile";
+  // if (window.web3.currentProvider.isMetaMask && checkIsMobile.any)
+  //   return "metamask-mobile";
 
-  if (window.web3.currentProvider.isMetaMask)
-    return "metamask";
+  // if (window.web3.currentProvider.isMetaMask) return "metamask";
 
-  if (window.web3.currentProvider.isTrust)
-    return "trust";
+  // if (window.web3.currentProvider.isTrust) return "trust";
 
-  if (window.web3.currentProvider.isQbao)
-    return "qbao";
+  // if (window.web3.currentProvider.isQbao) return "qbao";
 
-  if (window.web3.currentProvider.isBitpie)
-    return "bitpie";
+  // if (window.web3.currentProvider.isBitpie) return "bitpie";
 
-  if (typeof window.SOFA !== "undefined")
-    return "coinbase";
+  // if (typeof window.SOFA !== "undefined") return "coinbase";
 
-  if (typeof window.__CIPHER__ !== "undefined")
-    return "cipher";
+  // if (typeof window.__CIPHER__ !== "undefined") return "cipher";
 
-  if (window.web3.currentProvider.constructor.name === "EthereumProvider")
-    return "mist";
+  // if (window.web3.currentProvider.constructor.name === "EthereumProvider")
+  //   return "mist";
 
-  if (window.web3.currentProvider.constructor.name === "Web3FrameProvider")
-    return "parity";
+  // if (window.web3.currentProvider.constructor.name === "Web3FrameProvider")
+  //   return "parity";
 
-  if (window.web3.currentProvider.host && window.web3.currentProvider.host.indexOf("infura") !== -1)
-    return "infura";
+  // if (
+  //   window.web3.currentProvider.host &&
+  //   window.web3.currentProvider.host.indexOf("infura") !== -1
+  // )
+  //   return "infura";
 
-  if (window.web3.currentProvider.host && window.web3.currentProvider.host.indexOf("localhost") !== -1)
-    return "localhost";
+  // if (
+  //   window.web3.currentProvider.host &&
+  //   window.web3.currentProvider.host.indexOf("localhost") !== -1
+  // )
+  //   return "localhost";
 
   return "other";
 };
@@ -67,66 +64,89 @@ export const getWebClientProviderName = () => {
 class Web3Extended extends Web3 {
   stop = () => {
     this.reset();
-    if (this.currentProvider && typeof this.currentProvider.stop === "function") {
+    if (
+      this.currentProvider &&
+      typeof this.currentProvider.stop === "function"
+    ) {
       this.currentProvider.stop();
     }
-  }
+  };
 
-  setHWProvider = (device, network, path, accountsOffset = 0, accountsLength = 1) => {
+  setHWProvider = (
+    device,
+    network,
+    path,
+    accountsOffset = 0,
+    accountsLength = 1
+  ) => {
     this.stop();
     return new Promise(async (resolve, reject) => {
       try {
-        const networkId = network === "main" ? 1 : (network === "kovan" ? 42 : "");
+        const networkId =
+          network === "main" ? 1 : network === "kovan" ? 42 : "";
         this.setProvider(new Web3ProviderEngine());
-        const hwWalletSubProvider = device === "ledger"
-                                    ? LedgerSubProvider(async () => await Transport.create(), {networkId, path, accountsOffset, accountsLength})
-                                    : TrezorSubProvider({networkId, path, accountsOffset, accountsLength});
+        const hwWalletSubProvider =
+          device === "ledger"
+            ? LedgerSubProvider(async () => await Transport.create(), {
+                networkId,
+                path,
+                accountsOffset,
+                accountsLength
+              })
+            : TrezorSubProvider({
+                networkId,
+                path,
+                accountsOffset,
+                accountsLength
+              });
         this.currentProvider.name = device;
         this.currentProvider.addProvider(hwWalletSubProvider);
-        this.currentProvider.addProvider(new RpcSource({rpcUrl: settings.chain[network].nodeURL}));
+        this.currentProvider.addProvider(
+          new RpcSource({ rpcUrl: settings.chain[network].nodeURL })
+        );
         this.currentProvider.start();
         this.useLogs = false;
         resolve(true);
-      } catch(e) {
+      } catch (e) {
         reject(e);
       }
     });
-  }
+  };
 
   setWebClientWeb3 = (specificProvider = null) => {
     this.stop();
-    return new Promise(async (resolve, reject) => {
-      try {
-        if (specificProvider) {
-          try {
-            if (typeof specificProvider.enable === 'function') {
-              await specificProvider.enable();
-            }
-            resolve(specificProvider);
-          } catch (error) {
-            reject(new Error("User denied account access"));
-          }
-        } else if (window.web3 || window.ethereum) {
-          try {
-            let provider;
-            if (window.ethereum) {
-              await window.ethereum.enable();
-              provider = window.ethereum;
-            } else {
-              provider = window.web3.currentProvider;
-            }
-            resolve(provider);
-          } catch (error) {
-            reject(new Error("User denied account access"));
-          }
-        } else {
-          reject(new Error("No client"));
-        }
-      } catch(e) {
-        reject(e);
-      }
-    });
-  }
+    // return new Promise(async (resolve, reject) => {
+    //   try {
+    //     if (specificProvider) {
+    //       try {
+    //         if (typeof specificProvider.enable === "function") {
+    //           await specificProvider.enable();
+    //         }
+    //         resolve(specificProvider);
+    //       } catch (error) {
+    //         reject(new Error("User denied account access"));
+    //       }
+    //     } else if (window.web3 || window.ethereum) {
+    //       try {
+    //         let provider;
+    //         if (window.ethereum) {
+    //           await window.ethereum.enable();
+    //           provider = window.ethereum;
+    //         } else {
+    //           provider = window.web3.currentProvider;
+    //         }
+    //         resolve(provider);
+    //       } catch (error) {
+    //         reject(new Error("User denied account access"));
+    //       }
+    //     } else {
+    //       reject(new Error("No client"));
+    //     }
+    //   } catch (e) {
+    //     reject(e);
+    //   }
+    // });
+  };
 
   setWebClientProvider = provider => {
     return new Promise(async (resolve, reject) => {
@@ -135,12 +155,13 @@ class Web3Extended extends Web3 {
         this.useLogs = false;
         window.activeProvider = provider;
         this.currentProvider.name = getWebClientProviderName();
+        console.log(this.currentProvider.name);
         resolve(true);
       } catch (error) {
         reject(new Error("Error setting provider"));
       }
     });
-  }
+  };
 }
 
 const web3 = new Web3Extended();
